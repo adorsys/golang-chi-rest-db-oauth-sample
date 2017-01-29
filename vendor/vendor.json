@@ -1,0 +1,31 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "r1k3ihHx6pJkQXfx0bPEQ92yPrQ=",
+			"path": "github.com/pressly/chi",
+			"revision": "7765b0916fdc6791938554e9d53d39cae059ac8c",
+			"revisionTime": "2017-01-25T20:47:12Z"
+		},
+		{
+			"checksumSHA1": "5nM0DY8x1++mmX/W/Q5i2SFrBLA=",
+			"path": "github.com/pressly/chi/docgen",
+			"revision": "7765b0916fdc6791938554e9d53d39cae059ac8c",
+			"revisionTime": "2017-01-25T20:47:12Z"
+		},
+		{
+			"checksumSHA1": "uB79vLtJsyV/HQh1ghabGnDhcfg=",
+			"path": "github.com/pressly/chi/middleware",
+			"revision": "7765b0916fdc6791938554e9d53d39cae059ac8c",
+			"revisionTime": "2017-01-25T20:47:12Z"
+		},
+		{
+			"checksumSHA1": "5AiTC+FkwbriZG4uemAy8Y0/OOI=",
+			"path": "github.com/pressly/chi/render",
+			"revision": "7765b0916fdc6791938554e9d53d39cae059ac8c",
+			"revisionTime": "2017-01-25T20:47:12Z"
+		}
+	],
+	"rootPath": "github.com/adorsys/golang-chi-rest-db-oauth-sample"
+}
