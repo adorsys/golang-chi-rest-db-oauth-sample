@@ -3,6 +3,25 @@
 	"ignore": "test",
 	"package": [
 		{
+			"checksumSHA1": "7G7ADsNRwBcyfkJyTrX1oW4I0Rs=",
+			"path": "github.com/auth0/go-jwt-middleware",
+			"revision": "f3f7de3b9e394e3af3b88e1b9457f6f71d1ae0ac",
+			"revisionTime": "2016-04-21T21:57:38Z"
+		},
+		{
+			"checksumSHA1": "2Fy1Y6Z3lRRX1891WF/+HT4XS2I=",
+			"path": "github.com/dgrijalva/jwt-go",
+			"revision": "a601269ab70c205d26370c16f7c81e9017c14e04",
+			"revisionTime": "2017-01-04T18:22:50Z"
+		},
+		{
+			"checksumSHA1": "g/V4qrXjUGG9B+e3hB+4NAYJ5Gs=",
+			"origin": "github.com/auth0/go-jwt-middleware/vendor/github.com/gorilla/context",
+			"path": "github.com/gorilla/context",
+			"revision": "f3f7de3b9e394e3af3b88e1b9457f6f71d1ae0ac",
+			"revisionTime": "2016-04-21T21:57:38Z"
+		},
+		{
 			"checksumSHA1": "r1k3ihHx6pJkQXfx0bPEQ92yPrQ=",
 			"path": "github.com/pressly/chi",
 			"revision": "7765b0916fdc6791938554e9d53d39cae059ac8c",

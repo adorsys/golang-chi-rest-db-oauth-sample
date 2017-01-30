@@ -43,6 +43,8 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"github.com/auth0/go-jwt-middleware"
+	"github.com/dgrijalva/jwt-go"
 	"github.com/pressly/chi"
 	"github.com/pressly/chi/docgen"
 	"github.com/pressly/chi/middleware"
@@ -53,14 +55,29 @@ import (
 
 var routes = flag.Bool("routes", false, "Generate router documentation")
 
+// client secret form auth0.com
+var secret = flag.String("secret", "", "OAuth client secret")
+
 func main() {
 	flag.Parse()
+
+	if *secret == "" {
+		panic("Program argument --secret is required.")
+	}
 
 	r := chi.NewRouter()
 
 	r.Use(middleware.RequestID)
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
+	// get token at https://buildrunclick.eu.auth0.com/login?client=0beCklFKuabEpbQ2SJ34m6JmwxYDsn5H&protocol=oauth2&redirect_uri=https://buildrun.click&response_type=token&scope=openid roles
+	var jwtMiddleware = jwtmiddleware.New(jwtmiddleware.Options{
+		ValidationKeyGetter:  func(token *jwt.Token) (interface{}, error) {
+			return []byte(*secret), nil
+		},
+	})
+
+	r.Use(jwtMiddleware.Handler)
 
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("root."))
