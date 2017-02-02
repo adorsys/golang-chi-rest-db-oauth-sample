@@ -121,7 +121,7 @@ func main() {
 		return
 	}
 
-	http.ListenAndServe(":3333", r)
+	http.ListenAndServe("localhost:3333", r)
 }
 
 type Article struct {
