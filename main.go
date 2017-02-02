@@ -40,17 +40,18 @@ package main
 
 import (
 	"context"
-	"errors"
 	"flag"
 	"fmt"
+	"github.com/adorsys/golang-chi-rest-db-oauth-sample/db"
+	"github.com/adorsys/golang-chi-rest-db-oauth-sample/model"
 	"github.com/auth0/go-jwt-middleware"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/pressly/chi"
 	"github.com/pressly/chi/docgen"
 	"github.com/pressly/chi/middleware"
 	"github.com/pressly/chi/render"
-	"math/rand"
 	"net/http"
+	"strconv"
 )
 
 var routes = flag.Bool("routes", false, "Generate router documentation")
@@ -70,13 +71,13 @@ func main() {
 	r.Use(middleware.RequestID)
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
+
 	// get token at https://buildrunclick.eu.auth0.com/login?client=0beCklFKuabEpbQ2SJ34m6JmwxYDsn5H&protocol=oauth2&redirect_uri=https://buildrun.click&response_type=token&scope=openid roles
 	var jwtMiddleware = jwtmiddleware.New(jwtmiddleware.Options{
 		ValidationKeyGetter:  func(token *jwt.Token) (interface{}, error) {
 			return []byte(*secret), nil
 		},
 	})
-
 	r.Use(jwtMiddleware.Handler)
 
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
@@ -94,8 +95,7 @@ func main() {
 	// RESTy routes for "articles" resource
 	r.Route("/articles", func(r chi.Router) {
 		r.With(paginate).Get("/", ListArticles)
-		r.Post("/", CreateArticle)       // POST /articles
-		r.Get("/search", SearchArticles) // GET /articles/search
+		r.Post("/", CreateArticle) // POST /articles
 
 		r.Route("/:articleID", func(r chi.Router) {
 			r.Use(ArticleCtx)            // Load the *Article on the request context
@@ -124,65 +124,65 @@ func main() {
 	http.ListenAndServe("localhost:3333", r)
 }
 
-type Article struct {
-	ID    string `json:"id"`
-	Title string `json:"title"`
-}
-
-// Article fixture data
-var articles = []*Article{
-	{ID: "1", Title: "Hi"},
-	{ID: "2", Title: "sup"},
-}
-
 // ArticleCtx middleware is used to load an Article object from
 // the URL parameters passed through as the request. In case
 // the Article could not be found, we stop here and return a 404.
 func ArticleCtx(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		articleID := chi.URLParam(r, "articleID")
-		article, err := dbGetArticle(articleID)
+		id, err := strconv.Atoi(chi.URLParam(r, "articleID"))
+
 		if err != nil {
-			render.Status(r, http.StatusNotFound)
-			render.JSON(w, r, http.StatusText(http.StatusNotFound))
+			render.Status(r, http.StatusBadRequest)
+			render.JSON(w, r, http.StatusText(http.StatusBadRequest)) // TODO that does not return json :(
 			return
 		}
+
+		article, err := db.GetArticle(id)
+
+		if err != nil {
+			render.Status(r, http.StatusNotFound)
+			render.JSON(w, r, http.StatusText(http.StatusNotFound)) // TODO that does not return json :(
+			return
+		}
+
 		ctx := context.WithValue(r.Context(), "article", article)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 
-// SearchArticles searches the Articles data for a matching article.
-// It's just a stub, but you get the idea.
-func SearchArticles(w http.ResponseWriter, r *http.Request) {
-	// Filter by query param, and search...
-	render.JSON(w, r, articles)
-}
-
 // ListArticles returns an array of Articles.
 func ListArticles(w http.ResponseWriter, r *http.Request) {
-	render.JSON(w, r, articles)
+	articles, err := db.ListArticles()
+
+	if err != nil {
+		render.JSON(w, r, err)
+	} else {
+		render.JSON(w, r, articles)
+
+	}
 }
 
 // CreateArticle persists the posted Article and returns it
 // back to the client as an acknowledgement.
 func CreateArticle(w http.ResponseWriter, r *http.Request) {
 	var data struct {
-		*Article
+		*model.Article
 		OmitID interface{} `json:"id,omitempty"` // prevents 'id' from being set
 	}
 	// ^ the above is a nifty trick for how to omit fields during json unmarshalling
 	// through struct composition
 
 	if err := render.Bind(r.Body, &data); err != nil {
-		render.JSON(w, r, err.Error())
+		render.JSON(w, r, err.Error()) // TODO http status code
 		return
 	}
 
-	article := data.Article
-	dbNewArticle(article)
+	if created, err := db.CreateArticle(data.Article.Title); err != nil {
+		render.JSON(w, r, err.Error()) // TODO http status code
+	} else {
+		render.JSON(w, r, created)
+	}
 
-	render.JSON(w, r, article)
 }
 
 // GetArticle returns the specific Article. You'll notice it just
@@ -193,7 +193,7 @@ func GetArticle(w http.ResponseWriter, r *http.Request) {
 	// Assume if we've reach this far, we can access the article
 	// context because this handler is a child of the ArticleCtx
 	// middleware. The worst case, the recoverer middleware will save us.
-	article := r.Context().Value("article").(*Article)
+	article := r.Context().Value("article").(*model.Article)
 
 	// chi provides a basic companion subpackage "github.com/pressly/chi/render", however
 	// you can use any responder compatible with net/http.
@@ -202,10 +202,10 @@ func GetArticle(w http.ResponseWriter, r *http.Request) {
 
 // UpdateArticle updates an existing Article in our persistent store.
 func UpdateArticle(w http.ResponseWriter, r *http.Request) {
-	article := r.Context().Value("article").(*Article)
+	article := r.Context().Value("article").(*model.Article)
 
 	data := struct {
-		*Article
+		*model.Article
 		OmitID interface{} `json:"id,omitempty"` // prevents 'id' from being overridden
 	}{Article: article}
 
@@ -225,16 +225,15 @@ func DeleteArticle(w http.ResponseWriter, r *http.Request) {
 	// Assume if we've reach this far, we can access the article
 	// context because this handler is a child of the ArticleCtx
 	// middleware. The worst case, the recoverer middleware will save us.
-	article := r.Context().Value("article").(*Article)
+	article := r.Context().Value("article").(*model.Article)
 
-	article, err = dbRemoveArticle(article.ID)
+	err = db.DeleteArticle(article.ID)
 	if err != nil {
 		render.JSON(w, r, err)
 		return
 	}
 
-	// Respond with the deleted object, up to you.
-	render.JSON(w, r, article)
+	render.NoContent(w, r)
 }
 
 // A completely separate router for administrator routes
@@ -273,33 +272,4 @@ func paginate(next http.Handler) http.Handler {
 		// the page number, or the limit, and send a query cursor down the chain
 		next.ServeHTTP(w, r)
 	})
-}
-
-//--
-
-// Below are a bunch of helper functions that mock some kind of storage
-
-func dbNewArticle(article *Article) (string, error) {
-	article.ID = fmt.Sprintf("%d", rand.Intn(100)+10)
-	articles = append(articles, article)
-	return article.ID, nil
-}
-
-func dbGetArticle(id string) (*Article, error) {
-	for _, a := range articles {
-		if a.ID == id {
-			return a, nil
-		}
-	}
-	return nil, errors.New("article not found.")
-}
-
-func dbRemoveArticle(id string) (*Article, error) {
-	for i, a := range articles {
-		if a.ID == id {
-			articles = append((articles)[:i], (articles)[i+1:]...)
-			return a, nil
-		}
-	}
-	return nil, errors.New("article not found.")
 }

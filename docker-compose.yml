@@ -1,0 +1,11 @@
+version: '2.1'
+services:
+  db:
+    container_name: go-db
+    image: postgres:9.6
+    environment:
+      - POSTGRES_DATABASE=go
+      - POSTGRES_USER=go
+      - POSTGRESS_PASSWORD=go
+    ports:
+      - 5432:5432

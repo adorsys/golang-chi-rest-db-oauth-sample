@@ -15,11 +15,10 @@
 			"revisionTime": "2017-01-04T18:22:50Z"
 		},
 		{
-			"checksumSHA1": "g/V4qrXjUGG9B+e3hB+4NAYJ5Gs=",
-			"origin": "github.com/auth0/go-jwt-middleware/vendor/github.com/gorilla/context",
-			"path": "github.com/gorilla/context",
-			"revision": "f3f7de3b9e394e3af3b88e1b9457f6f71d1ae0ac",
-			"revisionTime": "2016-04-21T21:57:38Z"
+			"checksumSHA1": "dm3g5P1ezW+aOMZgOkJ//57zRxA=",
+			"path": "github.com/lib/pq",
+			"revision": "a6657b2386e9b8be76484c08711b02c7cf867ead",
+			"revisionTime": "2017-02-01T01:15:56Z"
 		},
 		{
 			"checksumSHA1": "r1k3ihHx6pJkQXfx0bPEQ92yPrQ=",
