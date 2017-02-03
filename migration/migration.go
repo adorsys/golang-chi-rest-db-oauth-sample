@@ -9,7 +9,7 @@ func Do(dbUrl string) (uint64, []error) {
 	if versionBefore, errors := getVersion(dbUrl); errors != nil {
 		return 0, errors
 	} else {
-		if allErrors, ok := migrate.UpSync(dbUrl, "./migration"); !ok {
+		if allErrors, ok := migrate.UpSync(dbUrl, "./data/migration"); !ok {
 			log.Printf("Could not apply migration. Reason: %s", allErrors)
 			return 0, allErrors
 		} else {
@@ -28,7 +28,7 @@ func Do(dbUrl string) (uint64, []error) {
 }
 
 func getVersion(dbUrl string) (uint64, []error) {
-	if versionBefore, err := migrate.Version(dbUrl, "./migration"); err != nil {
+	if versionBefore, err := migrate.Version(dbUrl, "./data/migration"); err != nil {
 		log.Print("Can't query db for migration information", err)
 		return 0, []error{err}
 	} else {
