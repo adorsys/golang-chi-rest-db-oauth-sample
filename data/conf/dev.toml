@@ -1,4 +1,9 @@
 env = "dev"
+debug = true
+
+[server]
+hostname = "localhost"
+port = 3333
 
 [db]
 url = "postgres://go:go@localhost/go?sslmode=disable"

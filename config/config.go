@@ -10,6 +10,11 @@ import (
 
 type Cfg struct {
 	Env string
+	Debug bool
+	Server struct {
+		Hostname string
+		Port int
+	}
 	Db  struct {
 		Url string
 	}
@@ -31,6 +36,9 @@ func Parse(cfg string) (*Cfg, error) {
 		}
 	}
 	Conf = conf
-	log.Println("Read config=", fmt.Sprintf("%+v", conf))
+	if conf.Debug {
+		log.Println("Read config=", fmt.Sprintf("%+v", conf))
+	}
 	return &conf, nil
 }
+

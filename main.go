@@ -57,13 +57,26 @@ import (
 	"strconv"
 )
 
-var routes = flag.Bool("routes", false, "Generate router documentation")
+var exportRoutes = flag.Bool("routes", false, "Generate router documentation")
 
 var configPath = flag.String("conf", "", "Path to TOML config")
 
-func main() {
+func init() {
 	flag.Parse()
 
+	if *configPath == "" && !*exportRoutes {
+		log.Fatal("Program argument --conf is required")
+	} else {
+		_, err := config.Parse(*configPath)
+		if err != nil {
+			log.Fatalf("Could not load config from %s. Reason: %s", *configPath, err)
+		}
+	}
+
+	db.Configure()
+}
+
+func main() {
 	r := chi.NewRouter()
 
 	r.Use(middleware.RequestID)
@@ -71,24 +84,13 @@ func main() {
 	r.Use(middleware.Recoverer)
 
 	// skip if we only want to generate routes
-	if !*routes {
-		if *configPath == "" {
-			log.Fatal("Program argument --conf is required")
-		}
-
-		conf, err := config.Parse(*configPath)
-		if err != nil {
-			log.Fatalf("Could not load config from %s. Reason: %s", *configPath, err)
-		}
-
-		if _, errors := migration.Do(conf.Db.Url); errors != nil {
-			log.Fatal("Could not apply db migration", errors)
-		}
-
-		tokenAuth := jwtauth.New("HS256", []byte(conf.Jwt.SignKey), nil)
-		r.Use(tokenAuth.Verifier)
-		r.Use(jwtauth.Authenticator)
+	if _, errors := migration.Do(config.Conf.Db.Url); errors != nil {
+		log.Fatal("Could not apply db migration", errors)
 	}
+
+	tokenAuth := jwtauth.New("HS256", []byte(config.Conf.Jwt.SignKey), nil)
+	r.Use(tokenAuth.Verifier)
+	r.Use(jwtauth.Authenticator)
 
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("root."))
@@ -122,7 +124,7 @@ func main() {
 	// Passing -routes to the program will generate docs for the above
 	// router definition. See the `routes.json` file in this folder for
 	// the output.
-	if *routes {
+	if *exportRoutes {
 		// fmt.Println(docgen.JSONRoutesDoc(r))
 		fmt.Println(docgen.MarkdownRoutesDoc(r, docgen.MarkdownOpts{
 			ProjectPath: "github.com/pressly/chi",
@@ -131,7 +133,8 @@ func main() {
 		return
 	}
 
-	http.ListenAndServe("localhost:3333", r)
+	address := config.Conf.Server.Hostname + ":" + strconv.Itoa(config.Conf.Server.Port)
+	http.ListenAndServe(address, r)
 }
 
 // ArticleCtx middleware is used to load an Article object from
