@@ -21,6 +21,42 @@
 			"revisionTime": "2017-02-01T01:15:56Z"
 		},
 		{
+			"checksumSHA1": "/Hup5ZVJt+IsGCspTow8TfXhyVM=",
+			"path": "github.com/mattes/migrate/driver",
+			"revision": "e92f038f409b358cfd182295c3cfa8cb6bf4c68f",
+			"revisionTime": "2017-01-23T21:54:25Z"
+		},
+		{
+			"checksumSHA1": "+I46GnLr1fSjzAyVa0gZWx8g33k=",
+			"path": "github.com/mattes/migrate/driver/postgres",
+			"revision": "e92f038f409b358cfd182295c3cfa8cb6bf4c68f",
+			"revisionTime": "2017-01-23T21:54:25Z"
+		},
+		{
+			"checksumSHA1": "aIuXAOtdrloDuV7IlKbyzB3Ci94=",
+			"path": "github.com/mattes/migrate/file",
+			"revision": "e92f038f409b358cfd182295c3cfa8cb6bf4c68f",
+			"revisionTime": "2017-01-23T21:54:25Z"
+		},
+		{
+			"checksumSHA1": "09Rcf2CwGB7L2sYJZyJ7Sl8Th4M=",
+			"path": "github.com/mattes/migrate/migrate",
+			"revision": "e92f038f409b358cfd182295c3cfa8cb6bf4c68f",
+			"revisionTime": "2017-01-23T21:54:25Z"
+		},
+		{
+			"checksumSHA1": "xzGjMJ5pt3OO1owmY/HxS0hcJIA=",
+			"path": "github.com/mattes/migrate/migrate/direction",
+			"revision": "e92f038f409b358cfd182295c3cfa8cb6bf4c68f",
+			"revisionTime": "2017-01-23T21:54:25Z"
+		},
+		{
+			"checksumSHA1": "0gwJT6QK/SBMaJuJrQBug6Yk8P0=",
+			"path": "github.com/mattes/migrate/pipe",
+			"revision": "e92f038f409b358cfd182295c3cfa8cb6bf4c68f",
+			"revisionTime": "2017-01-23T21:54:25Z"
+		},
+		{
 			"checksumSHA1": "r1k3ihHx6pJkQXfx0bPEQ92yPrQ=",
 			"path": "github.com/pressly/chi",
 			"revision": "7765b0916fdc6791938554e9d53d39cae059ac8c",

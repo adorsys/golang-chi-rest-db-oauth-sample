@@ -43,13 +43,16 @@ import (
 	"flag"
 	"fmt"
 	"github.com/adorsys/golang-chi-rest-db-oauth-sample/db"
+	"github.com/adorsys/golang-chi-rest-db-oauth-sample/migration"
 	"github.com/adorsys/golang-chi-rest-db-oauth-sample/model"
 	"github.com/auth0/go-jwt-middleware"
 	"github.com/dgrijalva/jwt-go"
+	_ "github.com/mattes/migrate/driver/postgres"
 	"github.com/pressly/chi"
 	"github.com/pressly/chi/docgen"
 	"github.com/pressly/chi/middleware"
 	"github.com/pressly/chi/render"
+	"log"
 	"net/http"
 	"strconv"
 )
@@ -59,11 +62,21 @@ var routes = flag.Bool("routes", false, "Generate router documentation")
 // client secret form auth0.com
 var secret = flag.String("secret", "", "OAuth client secret")
 
+var dbUrl = flag.String("db", "", "DB connection string")
+
 func main() {
 	flag.Parse()
 
 	if *secret == "" {
-		panic("Program argument --secret is required.")
+		log.Fatal("Program argument --secret is required.")
+	}
+
+	if *dbUrl == "" {
+		log.Fatal("Program argument --db is required")
+	}
+
+	if _, errors := migration.Do(*dbUrl); errors != nil {
+		log.Fatal("Could not apply db migration", errors)
 	}
 
 	r := chi.NewRouter()
@@ -74,7 +87,7 @@ func main() {
 
 	// get token at https://buildrunclick.eu.auth0.com/login?client=0beCklFKuabEpbQ2SJ34m6JmwxYDsn5H&protocol=oauth2&redirect_uri=https://buildrun.click&response_type=token&scope=openid roles
 	var jwtMiddleware = jwtmiddleware.New(jwtmiddleware.Options{
-		ValidationKeyGetter:  func(token *jwt.Token) (interface{}, error) {
+		ValidationKeyGetter: func(token *jwt.Token) (interface{}, error) {
 			return []byte(*secret), nil
 		},
 	})
