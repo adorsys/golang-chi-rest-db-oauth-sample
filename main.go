@@ -64,29 +64,31 @@ var configPath = flag.String("conf", "", "Path to TOML config")
 func main() {
 	flag.Parse()
 
-	if *configPath == "" {
-		log.Fatal("Program argument --conf is required")
-	}
-
-	conf, err := config.Parse(*configPath)
-	if err != nil {
-		log.Fatalf("Could not load config from %s. Reason: %s", *configPath, err)
-	}
-
-	if _, errors := migration.Do(conf.Db.Url); errors != nil {
-		log.Fatal("Could not apply db migration", errors)
-	}
-
 	r := chi.NewRouter()
 
 	r.Use(middleware.RequestID)
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 
-	// get token at https://buildrunclick.eu.auth0.com/login?client=0beCklFKuabEpbQ2SJ34m6JmwxYDsn5H&protocol=oauth2&redirect_uri=https://buildrun.click&response_type=token&scope=openid roles
-	tokenAuth := jwtauth.New("HS256", []byte(conf.Jwt.SignKey), nil)
-	r.Use(tokenAuth.Verifier)
-	r.Use(jwtauth.Authenticator)
+	// skip if we only want to generate routes
+	if !*routes {
+		if *configPath == "" {
+			log.Fatal("Program argument --conf is required")
+		}
+
+		conf, err := config.Parse(*configPath)
+		if err != nil {
+			log.Fatalf("Could not load config from %s. Reason: %s", *configPath, err)
+		}
+
+		if _, errors := migration.Do(conf.Db.Url); errors != nil {
+			log.Fatal("Could not apply db migration", errors)
+		}
+
+		tokenAuth := jwtauth.New("HS256", []byte(conf.Jwt.SignKey), nil)
+		r.Use(tokenAuth.Verifier)
+		r.Use(jwtauth.Authenticator)
+	}
 
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("root."))
