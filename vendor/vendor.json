@@ -3,6 +3,12 @@
 	"ignore": "test",
 	"package": [
 		{
+			"checksumSHA1": "hqDDDpue/5363luidNMBS8z8eJU=",
+			"path": "github.com/BurntSushi/toml",
+			"revision": "99064174e013895bbd9b025c31100bd1d9b590ca",
+			"revisionTime": "2016-07-17T15:07:09Z"
+		},
+		{
 			"checksumSHA1": "7G7ADsNRwBcyfkJyTrX1oW4I0Rs=",
 			"path": "github.com/auth0/go-jwt-middleware",
 			"revision": "f3f7de3b9e394e3af3b88e1b9457f6f71d1ae0ac",

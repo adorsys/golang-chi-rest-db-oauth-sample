@@ -1,0 +1,7 @@
+env = "dev"
+
+[db]
+url = "postgres://go:go@localhost/go?sslmode=disable"
+
+[jwt]
+key = "dFcgNAqajhoQPqyOivx-n2VWt5KpSPkuPxLJKbnUPXYFcFONkuvFO_XWMg153otv"

@@ -42,6 +42,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"github.com/adorsys/golang-chi-rest-db-oauth-sample/config"
 	"github.com/adorsys/golang-chi-rest-db-oauth-sample/db"
 	"github.com/adorsys/golang-chi-rest-db-oauth-sample/migration"
 	"github.com/adorsys/golang-chi-rest-db-oauth-sample/model"
@@ -59,23 +60,21 @@ import (
 
 var routes = flag.Bool("routes", false, "Generate router documentation")
 
-// client secret form auth0.com
-var secret = flag.String("secret", "", "OAuth client secret")
-
-var dbUrl = flag.String("db", "", "DB connection string")
+var configPath = flag.String("conf", "", "Path to TOML config")
 
 func main() {
 	flag.Parse()
 
-	if *secret == "" {
-		log.Fatal("Program argument --secret is required.")
+	if *configPath == "" {
+		log.Fatal("Program argument --conf is required")
 	}
 
-	if *dbUrl == "" {
-		log.Fatal("Program argument --db is required")
+	conf, err := config.Parse(*configPath)
+	if err != nil {
+		log.Fatalf("Could not load config from %s. Reason: %s", *configPath, err)
 	}
 
-	if _, errors := migration.Do(*dbUrl); errors != nil {
+	if _, errors := migration.Do(conf.Db.Url); errors != nil {
 		log.Fatal("Could not apply db migration", errors)
 	}
 
@@ -88,7 +87,7 @@ func main() {
 	// get token at https://buildrunclick.eu.auth0.com/login?client=0beCklFKuabEpbQ2SJ34m6JmwxYDsn5H&protocol=oauth2&redirect_uri=https://buildrun.click&response_type=token&scope=openid roles
 	var jwtMiddleware = jwtmiddleware.New(jwtmiddleware.Options{
 		ValidationKeyGetter: func(token *jwt.Token) (interface{}, error) {
-			return []byte(*secret), nil
+			return []byte(conf.Jwt.Key), nil
 		},
 	})
 	r.Use(jwtMiddleware.Handler)
