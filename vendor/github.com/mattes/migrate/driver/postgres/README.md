@@ -3,7 +3,7 @@
 * Runs migrations in transactions.
   That means that if a migration fails, it will be safely rolled back.
 * Tries to return helpful error messages.
-* Stores migration versionBefore details in table ``schema_migrations``.
+* Stores migration version details in table ``schema_migrations``.
   This table will be auto-generated.
 
 

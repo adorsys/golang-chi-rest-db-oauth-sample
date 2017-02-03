@@ -46,8 +46,7 @@ import (
 	"github.com/adorsys/golang-chi-rest-db-oauth-sample/db"
 	"github.com/adorsys/golang-chi-rest-db-oauth-sample/migration"
 	"github.com/adorsys/golang-chi-rest-db-oauth-sample/model"
-	"github.com/auth0/go-jwt-middleware"
-	"github.com/dgrijalva/jwt-go"
+	"github.com/goware/jwtauth"
 	_ "github.com/mattes/migrate/driver/postgres"
 	"github.com/pressly/chi"
 	"github.com/pressly/chi/docgen"
@@ -85,12 +84,9 @@ func main() {
 	r.Use(middleware.Recoverer)
 
 	// get token at https://buildrunclick.eu.auth0.com/login?client=0beCklFKuabEpbQ2SJ34m6JmwxYDsn5H&protocol=oauth2&redirect_uri=https://buildrun.click&response_type=token&scope=openid roles
-	var jwtMiddleware = jwtmiddleware.New(jwtmiddleware.Options{
-		ValidationKeyGetter: func(token *jwt.Token) (interface{}, error) {
-			return []byte(conf.Jwt.Key), nil
-		},
-	})
-	r.Use(jwtMiddleware.Handler)
+	tokenAuth := jwtauth.New("HS256", []byte(conf.Jwt.SignKey), nil)
+	r.Use(tokenAuth.Verifier)
+	r.Use(jwtauth.Authenticator)
 
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("root."))

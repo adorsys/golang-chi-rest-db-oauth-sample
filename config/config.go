@@ -14,7 +14,7 @@ type Cfg struct {
 		Url string
 	}
 	Jwt struct {
-		Key string
+		SignKey string
 	}
 }
 

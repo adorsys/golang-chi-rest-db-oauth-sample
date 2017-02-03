@@ -9,16 +9,18 @@
 			"revisionTime": "2016-07-17T15:07:09Z"
 		},
 		{
-			"checksumSHA1": "7G7ADsNRwBcyfkJyTrX1oW4I0Rs=",
-			"path": "github.com/auth0/go-jwt-middleware",
-			"revision": "f3f7de3b9e394e3af3b88e1b9457f6f71d1ae0ac",
-			"revisionTime": "2016-04-21T21:57:38Z"
+			"checksumSHA1": "CMfwCFcZRDJeIVVbIHa6t4Aewl8=",
+			"path": "github.com/dgrijalva/jwt-go",
+			"revision": "268038b363c7a8d7306b8e35bf77a1fde4b0c402",
+			"revisionTime": "2016-06-16T19:14:24Z",
+			"version": "v2.7.0",
+			"versionExact": "v2.7.0"
 		},
 		{
-			"checksumSHA1": "2Fy1Y6Z3lRRX1891WF/+HT4XS2I=",
-			"path": "github.com/dgrijalva/jwt-go",
-			"revision": "a601269ab70c205d26370c16f7c81e9017c14e04",
-			"revisionTime": "2017-01-04T18:22:50Z"
+			"checksumSHA1": "3Tr5vY8q6riEe9DKkktm2fEidVU=",
+			"path": "github.com/goware/jwtauth",
+			"revision": "d5f87ca5c3b52eaf56cc8c70c545d8aadd7cbb0a",
+			"revisionTime": "2016-09-13T15:58:18Z"
 		},
 		{
 			"checksumSHA1": "dm3g5P1ezW+aOMZgOkJ//57zRxA=",
