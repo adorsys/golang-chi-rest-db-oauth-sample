@@ -29,6 +29,12 @@
 			"revisionTime": "2017-02-01T01:15:56Z"
 		},
 		{
+			"checksumSHA1": "xppHi82MLqVx1eyQmbhTesAEjx8=",
+			"path": "github.com/lib/pq/oid",
+			"revision": "a6657b2386e9b8be76484c08711b02c7cf867ead",
+			"revisionTime": "2017-02-01T01:15:56Z"
+		},
+		{
 			"checksumSHA1": "/Hup5ZVJt+IsGCspTow8TfXhyVM=",
 			"path": "github.com/mattes/migrate/driver",
 			"revision": "e92f038f409b358cfd182295c3cfa8cb6bf4c68f",
