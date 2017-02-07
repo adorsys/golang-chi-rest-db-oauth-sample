@@ -10,7 +10,9 @@ REST sample with all the stuff we need in our day jobs
 
 ## Setup
 - install Go 1.7
-- start service: `go run main.go --conf data/conf/dev.toml`
+- get sources `$ go get github.com/adorsys/golang-chi-rest-db-oauth-sample`
+- start DB: `$ docker-compose up` (localhost:5432)
+- start service: `$ go run main.go --conf data/conf/dev.toml`
 - [get JWT](https://buildrunclick.eu.auth0.com/login?client=0beCklFKuabEpbQ2SJ34m6JmwxYDsn5H&protocol=oauth2&redirect_uri=https://adorsys.de/karriere.html&response_type=token&scope=openid roles) (admin@buildrun.click:admin)
   - copy token from URL after redirect
 - try with curl:
